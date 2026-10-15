@@ -1,5 +1,9 @@
 import pytest
 import os
+
+# Set headless mode for PyQt5 tests in Linux sandbox
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+
 from gtts import gTTS
 from pydub import AudioSegment
 
