@@ -32,17 +32,12 @@ jobs:
 
       - name: 执行 PyInstaller 编译为 Windows 免安装应用
         run: |
-          pyinstaller --name "AudioSummary" `
-                      --windowed `
-                      --onedir `
-                      --noconfirm `
-                      --clean `
-                      --add-data "src;src" `
-                      main.py
+          pyinstaller --noconfirm --clean AudioSummary.spec
 
       - name: 打包为便携 ZIP 压缩包
+        shell: powershell
         run: |
-          powershell Compress-Archive -Path dist/AudioSummary -DestinationPath AudioSummary-Windows-x64.zip -Force
+          Compress-Archive -Path dist/AudioSummary -DestinationPath AudioSummary-Windows-x64.zip -Force
 
       - name: 上传构建产物 (Artifacts)
         uses: actions/upload-artifact@v4
@@ -73,3 +68,4 @@ jobs:
           files: AudioSummary-Windows-x64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
