@@ -36,12 +36,15 @@ jobs:
           python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Systran/faster-whisper-tiny', local_dir='models/faster-whisper-tiny')"
 
       - name: 执行 PyInstaller 编译为 Windows 免安装应用
-        shell: cmd
+        shell: pwsh
         run: |
-          python -m PyInstaller --noconfirm --clean AudioSummary.spec > pyinstaller.log 2>&1
-          set PY_EXIT=%ERRORLEVEL%
-          type pyinstaller.log
-          if %PY_EXIT% NEQ 0 exit /b %PY_EXIT%
+          python -m PyInstaller --noconfirm --clean AudioSummary.spec 2>&1 | Tee-Object -FilePath "pyinstaller.log"
+          if ($LASTEXITCODE -ne 0) {
+            $tailLines = Get-Content "pyinstaller.log" -Tail 60
+            $escaped = ($tailLines -join '%0A') -replace "`r", ""
+            Write-Host "::error title=PyInstaller_Failure::$escaped"
+            exit $LASTEXITCODE
+          }
 
       - name: 上传编译日志产物 (审计排查)
         uses: actions/upload-artifact@v4
