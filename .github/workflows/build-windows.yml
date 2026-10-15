@@ -57,6 +57,23 @@ jobs:
           path: pyinstaller.log
           if-no-files-found: ignore
 
+      - name: 修复与统一 Windows C++ 运行时 (杜绝 PyQt5 0xc0000005 闪退)
+        shell: pwsh
+        run: |
+          $sys32 = "C:\Windows\System32"
+          $internal = "dist/AudioSummary/_internal"
+          $qtBin = "dist/AudioSummary/_internal/PyQt5/Qt5/bin"
+          Copy-Item "$sys32\msvcp140.dll" "$internal\msvcp140.dll" -Force
+          Copy-Item "$sys32\msvcp140_1.dll" "$internal\msvcp140_1.dll" -Force
+          Copy-Item "$sys32\vcruntime140.dll" "$internal\vcruntime140.dll" -Force
+          Copy-Item "$sys32\vcruntime140_1.dll" "$internal\vcruntime140_1.dll" -Force
+          if (Test-Path $qtBin) {
+            Copy-Item "$sys32\msvcp140.dll" "$qtBin\MSVCP140.dll" -Force
+            Copy-Item "$sys32\msvcp140_1.dll" "$qtBin\MSVCP140_1.dll" -Force
+            Copy-Item "$sys32\vcruntime140.dll" "$qtBin\VCRUNTIME140.dll" -Force
+            Copy-Item "$sys32\vcruntime140_1.dll" "$qtBin\VCRUNTIME140_1.dll" -Force
+          }
+
       - name: 将内置离线模型装配入发布目录
         shell: pwsh
         run: |
