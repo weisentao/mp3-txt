@@ -128,8 +128,7 @@ class MainWindow(QMainWindow):
         self.log_display.clear()
         self.btn_open.setEnabled(False)
 
-        # We use tiny for tests/fast processing
-        self.worker = TranscriptionWorker(filepath, total_duration=self.current_duration, model_size="tiny")
+        self.worker = TranscriptionWorker(filepath, total_duration=self.current_duration, model_size="base")
         self.worker.progress_signal.connect(self.update_log)
         self.worker.segment_signal.connect(self.update_log)
         self.worker.metrics_signal.connect(self.update_metrics)

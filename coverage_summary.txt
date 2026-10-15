@@ -1,0 +1,41 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0 -- /home/jules/.pyenv/versions/3.12.13/bin/python3.12
+cachedir: .pytest_cache
+PyQt5 5.15.11 -- Qt runtime 5.15.19 -- Qt compiled 5.15.14
+rootdir: /app
+plugins: xvfb-3.1.1, cov-7.1.0, anyio-4.15.1, qt-4.5.0
+collecting ... collected 13 items
+
+tests/test_backend_extended.py::test_metadata_multiple_formats PASSED    [  7%]
+tests/test_backend_extended.py::test_extreme_short_audio_transcription PASSED [ 15%]
+tests/test_backend_extended.py::test_consecutive_transcription_stability PASSED [ 23%]
+tests/test_backend_extended.py::test_diarization_edge_cases PASSED       [ 30%]
+tests/test_pipeline.py::test_full_pipeline_with_real_audio PASSED        [ 38%]
+tests/test_pipeline.py::test_pure_silence_audio PASSED                   [ 46%]
+tests/test_pipeline.py::test_complex_path PASSED                         [ 53%]
+tests/test_pipeline.py::test_srt_generation PASSED                       [ 61%]
+tests/test_pipeline.py::test_offline_fallback PASSED                     [ 69%]
+tests/test_ui.py::test_mainwindow_initialization PASSED                  [ 76%]
+tests/test_ui.py::test_mainwindow_file_selection_mocked PASSED           [ 84%]
+tests/test_ui.py::test_mainwindow_srt_checkbox_toggle PASSED             [ 92%]
+tests/test_ui.py::test_mainwindow_error_handling PASSED                  [100%]
+
+=============================== warnings summary ===============================
+../home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydub/utils.py:14
+  /home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/pydub/utils.py:14: DeprecationWarning: 'audioop' is deprecated and slated for removal in Python 3.13
+    import audioop
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.13-final-0 _______________
+
+Name                 Stmts   Miss  Cover
+----------------------------------------
+src/analyzer.py         51      1    98%
+src/audio_utils.py      32      5    84%
+src/transcriber.py      62     11    82%
+src/ui.py              138     37    73%
+----------------------------------------
+TOTAL                  283     54    81%
+Coverage HTML written to dir htmlcov
+======================== 13 passed, 1 warning in 16.02s ========================
