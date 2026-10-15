@@ -1,0 +1,8 @@
+PyQt5>=5.15.0
+faster-whisper>=1.0.0
+pydub>=0.25.1
+huggingface-hub>=0.20.0
+gTTS>=2.5.0
+pytest>=8.0.0
+pytest-qt>=4.4.0
+pyinstaller>=6.0.0
