@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-from PyInstaller.utils.hooks import collect_all
+from PyInstaller.utils.hooks import collect_all, copy_metadata
 
 datas = [('src', 'src')]
 binaries = []
@@ -9,19 +9,22 @@ hiddenimports = [
     'PyQt5.QtWidgets',
     'PyQt5.QtGui',
     'pydub',
-    'faster_whisper',
-    'ctranslate2',
-    'huggingface_hub',
 ]
 
-for pkg in ['faster_whisper', 'ctranslate2', 'huggingface_hub']:
+for pkg in ['faster_whisper', 'ctranslate2']:
     try:
         d, b, h = collect_all(pkg)
         datas.extend(d)
         binaries.extend(b)
         hiddenimports.extend(h)
     except Exception as e:
-        print(f"collect_all warning for {pkg}: {e}")
+        print(f"collect_all notice: {e}")
+
+for meta in ['huggingface_hub', 'tqdm', 'regex', 'requests', 'packaging', 'filelock', 'numpy', 'tokenizers']:
+    try:
+        datas.extend(copy_metadata(meta))
+    except Exception as e:
+        print(f"copy_metadata notice for {meta}: {e}")
 
 a = Analysis(
     ['main.py'],
@@ -32,7 +35,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['tkinter', 'matplotlib', 'scipy'],
+    excludes=['tkinter', 'matplotlib', 'scipy', 'pytest', 'pytest_qt'],
     noarchive=False,
     optimize=0,
 )

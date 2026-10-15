@@ -30,14 +30,28 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: 云端预拉取离线语音大模型 (开箱即用免下载)
+        shell: pwsh
+        run: |
+          python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Systran/faster-whisper-tiny', local_dir='models/faster-whisper-tiny')"
+
       - name: 执行 PyInstaller 编译为 Windows 免安装应用
+        shell: pwsh
         run: |
           pyinstaller --noconfirm --clean AudioSummary.spec
 
-      - name: 打包为便携 ZIP 压缩包
-        shell: powershell
+      - name: 将内置离线模型装配入发布目录
+        shell: pwsh
         run: |
-          Compress-Archive -Path dist/AudioSummary -DestinationPath AudioSummary-Windows-x64.zip -Force
+          if (Test-Path "models") {
+            New-Item -ItemType Directory -Force -Path "dist/AudioSummary/models"
+            Copy-Item -Path "models/*" -Destination "dist/AudioSummary/models" -Recurse -Force
+          }
+
+      - name: 打包为便携 ZIP 压缩包
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/AudioSummary/* -DestinationPath AudioSummary-Windows-x64.zip -Force
 
       - name: 上传构建产物 (Artifacts)
         uses: actions/upload-artifact@v4
@@ -56,7 +70,7 @@ jobs:
             ### 标杆级全功能智能语音转写与需求总结助手 (Windows 免安装绿色版)
             
             #### 核心特性：
-            - **开箱即用 · 免安装**：直接解压运行 `AudioSummary.exe`，无需本地配置 Python 环境或编译。
+            - **开箱即用 · 内置离线模型**：已预装 Whisper 离线语音模型，解压后双击 `AudioSummary.exe` 直接运行，无需联网下载大模型，无需配置 Python 环境！
             - **全透明实时字幕流 (No Black Box)**：实时滚动展示带时间戳句子与推理倍速。
             - **防熔断与中文路径安全隔离**：彻底杜绝非 ASCII 路径导致的崩溃。
             - **100% 离线降级保障**：断网状态自动生成 4 份标准交付物：
