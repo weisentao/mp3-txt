@@ -31,6 +31,20 @@ for meta in ['huggingface_hub', 'tqdm', 'regex', 'requests', 'packaging', 'filel
     except Exception as e:
         print(f"copy_metadata notice for {meta}: {e}")
 
+def dedupe_entries(entries):
+    seen = set()
+    res = []
+    for s, d in entries:
+        norm = (os.path.normpath(str(s)).lower(), os.path.normpath(str(d)).lower())
+        if norm not in seen:
+            seen.add(norm)
+            res.append((s, d))
+    return res
+
+datas = dedupe_entries(datas)
+binaries = dedupe_entries(binaries)
+hiddenimports = list(dict.fromkeys(hiddenimports))
+
 a = Analysis(
     ['main.py'],
     pathex=['.'],

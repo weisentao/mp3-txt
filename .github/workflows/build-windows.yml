@@ -36,8 +36,20 @@ jobs:
           python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='Systran/faster-whisper-tiny', local_dir='models/faster-whisper-tiny')"
 
       - name: 执行 PyInstaller 编译为 Windows 免安装应用
+        shell: cmd
         run: |
-          python -m PyInstaller --noconfirm --clean AudioSummary.spec
+          python -m PyInstaller --noconfirm --clean AudioSummary.spec > pyinstaller.log 2>&1
+          set PY_EXIT=%ERRORLEVEL%
+          type pyinstaller.log
+          if %PY_EXIT% NEQ 0 exit /b %PY_EXIT%
+
+      - name: 上传编译日志产物 (审计排查)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pyinstaller-log
+          path: pyinstaller.log
+          if-no-files-found: ignore
 
       - name: 将内置离线模型装配入发布目录
         shell: pwsh
