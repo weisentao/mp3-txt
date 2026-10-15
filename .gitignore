@@ -2,3 +2,7 @@ __pycache__/
 .coverage
 htmlcov/
 *.pyc
+dist/
+build/
+*.log
+models/

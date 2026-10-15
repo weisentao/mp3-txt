@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Generator, Dict, Any, List
 from faster_whisper import WhisperModel
 from huggingface_hub import snapshot_download
@@ -12,11 +13,33 @@ class Transcriber:
         """
         Loads local model or downloads from hf-mirror.com with fallback to standard HF
         """
-        # Auto search for local models (e.g. models directory)
-        local_model_path = os.path.join("models", f"faster-whisper-{self.model_size}")
-        if os.path.exists(local_model_path):
-            print("优先自动搜索本地已存在的 Whisper 模型...")
-            return local_model_path
+        if getattr(sys, 'frozen', False):
+            base_dir = os.path.dirname(os.path.abspath(sys.executable))
+        else:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        candidates = [
+            os.path.join(base_dir, "models", f"faster-whisper-{self.model_size}"),
+            os.path.join(getattr(sys, "_MEIPASS", ""), "models", f"faster-whisper-{self.model_size}"),
+            os.path.join(os.getcwd(), "models", f"faster-whisper-{self.model_size}"),
+            os.path.join("models", f"faster-whisper-{self.model_size}"),
+        ]
+        for cand in candidates:
+            if cand and os.path.exists(cand):
+                print(f"优先自动加载本地离线 Whisper 模型: {cand}")
+                return cand
+
+        # Fallback: check if ANY model is present in the models/ directory
+        for search_root in [base_dir, os.getcwd(), getattr(sys, "_MEIPASS", "")]:
+            if not search_root:
+                continue
+            models_dir = os.path.join(search_root, "models")
+            if os.path.isdir(models_dir):
+                for entry in os.listdir(models_dir):
+                    sub = os.path.join(models_dir, entry)
+                    if os.path.isdir(sub) and entry.startswith("faster-whisper"):
+                        print(f"找到本地已预置的 Whisper 模型 ({entry}): {sub}")
+                        return sub
 
         # Download using huggingface_hub from domestic mirror
         # Note: In a real app, environment variables would be set for HF_ENDPOINT
