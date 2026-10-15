@@ -10,6 +10,9 @@ on:
 permissions:
   contents: write
 
+env:
+  KMP_DUPLICATE_LIB_OK: "TRUE"
+
 jobs:
   build:
     name: 编译打包 Windows 客户端 (免安装直接运行)

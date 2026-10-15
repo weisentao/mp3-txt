@@ -54,7 +54,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['tkinter', 'matplotlib', 'scipy', 'pytest', 'pytest_qt'],
+    excludes=['tkinter', 'matplotlib', 'scipy', 'pytest', 'pytest_qt', 'onnxruntime', 'torch', 'torchaudio'],
     noarchive=False,
     optimize=0,
 )

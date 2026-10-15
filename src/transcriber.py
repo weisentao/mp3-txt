@@ -91,8 +91,21 @@ class Transcriber:
         if not self.model:
             self.load_model()
 
+        use_vad = False
         try:
-            segments, info = self.model.transcribe(filepath, language="zh", beam_size=5, vad_filter=True)
+            import onnxruntime
+            use_vad = True
+        except Exception:
+            use_vad = False
+
+        try:
+            segments, info = self.model.transcribe(
+                filepath,
+                language="zh",
+                beam_size=5,
+                vad_filter=use_vad,
+                no_speech_threshold=0.6
+            )
         except Exception as e:
             raise RuntimeError(f"转写失败: {e}\n诊断建议: 检查音频文件是否损坏，或重试。")
 
