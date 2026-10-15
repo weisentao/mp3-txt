@@ -1,4 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os
+import sys
+
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
 from PyInstaller.utils.hooks import collect_all, copy_metadata
 
 datas = [('src', 'src')]
@@ -18,7 +23,7 @@ for pkg in ['faster_whisper', 'ctranslate2']:
         binaries.extend(b)
         hiddenimports.extend(h)
     except Exception as e:
-        print(f"collect_all notice: {e}")
+        print(f"collect_all notice for {pkg}: {e}")
 
 for meta in ['huggingface_hub', 'tqdm', 'regex', 'requests', 'packaging', 'filelock', 'numpy', 'tokenizers']:
     try:

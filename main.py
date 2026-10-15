@@ -1,5 +1,8 @@
-import sys
 import os
+import sys
+
+# Prevent OpenMP runtime conflict on Windows
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # Ensure current directory is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

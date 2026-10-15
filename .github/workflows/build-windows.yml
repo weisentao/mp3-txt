@@ -38,7 +38,13 @@ jobs:
       - name: 执行 PyInstaller 编译为 Windows 免安装应用
         shell: pwsh
         run: |
-          pyinstaller --noconfirm --clean AudioSummary.spec
+          $buildProcess = Start-Process -FilePath "pyinstaller" -ArgumentList "--noconfirm", "--clean", "AudioSummary.spec" -NoNewWindow -PassThru -Wait -RedirectStandardOutput "build_stdout.log" -RedirectStandardError "build_stderr.log"
+          Get-Content build_stdout.log -Tail 100
+          if ($buildProcess.ExitCode -ne 0) {
+            Write-Host "=== PyInstaller Build Error Output ===" -ForegroundColor Red
+            Get-Content build_stderr.log
+            exit $buildProcess.ExitCode
+          }
 
       - name: 将内置离线模型装配入发布目录
         shell: pwsh
